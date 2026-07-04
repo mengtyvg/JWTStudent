@@ -18,7 +18,7 @@ class SecurityConfig {
                 it.requestMatchers(
                     HttpMethod.POST,
                     "/api/student/register",
-                    "/api/students/login"
+                    "/api/student/login"
                 ).permitAll()
 
                 it.anyRequest().authenticated()

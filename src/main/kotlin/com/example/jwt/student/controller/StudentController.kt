@@ -1,5 +1,7 @@
 package com.example.jwt.student.controller
 
+import com.example.jwt.student.dto.AuthResponseDTO
+import com.example.jwt.student.dto.StudentLoginRequestDTO
 import com.example.jwt.student.dto.StudentRegisterRequestDTO
 import com.example.jwt.student.dto.StudentResponseDTO
 import com.example.jwt.student.service.StudentService
@@ -20,5 +22,12 @@ class StudentController(
         @Valid @RequestBody requestDTO: StudentRegisterRequestDTO
     ): StudentResponseDTO {
         return studentService.register(requestDTO)
+    }
+
+    @PostMapping("/login")
+    fun login(
+        @Valid @RequestBody requestDTO: StudentLoginRequestDTO
+    ): AuthResponseDTO {
+        return studentService.login(requestDTO)
     }
 }
