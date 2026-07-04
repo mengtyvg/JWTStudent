@@ -35,5 +35,21 @@ class JwtServiceImpl (
             .compact()
     }
 
+    override fun extractEmail(token: String): String? {
+        return try {
+            val key = Keys.hmacShaKeyFor(secret.toByteArray())
+
+            Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .payload
+                .subject
+
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 
 }

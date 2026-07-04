@@ -8,4 +8,6 @@ import com.example.jwt.student.dto.StudentResponseDTO
 interface StudentService {
     fun login(requestDTO: StudentLoginRequestDTO): AuthResponseDTO
     fun register(requestDTO: StudentRegisterRequestDTO): StudentResponseDTO
+    fun getProfile(email: String): StudentResponseDTO
+
 }

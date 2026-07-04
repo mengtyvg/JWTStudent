@@ -92,6 +92,16 @@ class StudentServiceImpl(
 
     }
 
+    override fun getProfile(email: String): StudentResponseDTO {
+        val student = studentRepository.findByEmail(email)
+            ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Student not found"
+            )
+
+        return StudentResponseDTO(student)
+    }
+
 
 
 
