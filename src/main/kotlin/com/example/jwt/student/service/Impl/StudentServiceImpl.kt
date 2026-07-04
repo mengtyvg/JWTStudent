@@ -32,7 +32,7 @@ class StudentServiceImpl(
         val student = studentRepository.findByEmail(email)
         ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "invalid Email bro")
 
-        if(student.password != passwordEncoder.encode(password)) {
+        if (!passwordEncoder.matches(password, student.password)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Passwords do not match")
         }
 
