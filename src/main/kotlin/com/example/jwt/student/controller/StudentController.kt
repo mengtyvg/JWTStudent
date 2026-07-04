@@ -36,7 +36,7 @@ class StudentController(
     @GetMapping("/profile")
     fun getProfile(authentication: Authentication): StudentResponseDTO {
         val loggedInEmail = authentication.name
-        return studentService.getProfile(authentication.name)
+        return studentService.getProfile(loggedInEmail)
 
 
     }
