@@ -1,7 +1,6 @@
 package com.example.jwt.student.config
 
 
-import com.example.jwt.student.service.JwtService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -12,14 +11,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val dynamicAuthorizationManager: DynamicAuthorizationManager
 ) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .csrf { it.disable() }
-            .sessionManagement{
+            .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authorizeHttpRequests {
@@ -29,7 +29,7 @@ class SecurityConfig(
                     "/api/student/login"
                 ).permitAll()
 
-                it.anyRequest().authenticated()
+                it.anyRequest().access(dynamicAuthorizationManager)
             }
             .addFilterBefore(
                 jwtAuthenticationFilter,

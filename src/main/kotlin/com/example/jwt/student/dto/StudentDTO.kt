@@ -42,7 +42,8 @@ data class StudentResponseDTO(
     val phone: String? = null,
     val gender: String? = null,
     val address: String? = null,
-    val status: Boolean? = null
+    val status: Boolean? = null,
+    val role: String? = null
 )
 
 data class StudentUpdateRequestDTO(
@@ -56,4 +57,9 @@ data class AuthResponseDTO(
     val token: String,
     val tokenType: String = "Bearer",
     val student: StudentResponseDTO
+)
+
+
+data class ChangeRoleRequest(
+    val role: String
 )

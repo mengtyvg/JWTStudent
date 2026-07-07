@@ -1,11 +1,11 @@
 package com.example.jwt.student.service.Impl
 
-import com.example.jwt.student.config.PasswordEncoderConfig
 import com.example.jwt.student.dto.AuthResponseDTO
 import com.example.jwt.student.dto.StudentLoginRequestDTO
 import com.example.jwt.student.dto.StudentRegisterRequestDTO
 import com.example.jwt.student.dto.StudentResponseDTO
 import com.example.jwt.student.entity.StudentEntity
+import com.example.jwt.student.repository.RoleRepository
 import com.example.jwt.student.repository.StudentRepository
 import com.example.jwt.student.service.JwtService
 import com.example.jwt.student.service.StudentService
@@ -18,6 +18,7 @@ import java.time.LocalDateTime
 @Service
 class StudentServiceImpl(
     val studentRepository: StudentRepository,
+    val roleRepository: RoleRepository,
     val passwordEncoder: PasswordEncoder,
     val jwtService: JwtService,
 ) : StudentService {
@@ -36,7 +37,10 @@ class StudentServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Passwords do not match")
         }
 
-        val token = jwtService.generateToken(student.email!!)
+        val roleName = student.role?.name
+            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User role is missing")
+
+        val token = jwtService.generateToken(student.email!!, roleName)
 
         return AuthResponseDTO(
             token = token,
@@ -47,7 +51,8 @@ class StudentServiceImpl(
                 phone = student.phone,
                 gender = student.gender,
                 address = student.address,
-                status = student.status
+                status = student.status,
+                role = roleName
             )
         )
     }
@@ -74,6 +79,9 @@ class StudentServiceImpl(
         }
 
 
+        val defaultRole = roleRepository.findByName("USER")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Default USER role is missing")
+
         val student = StudentEntity(
             email = email,
             fullName = fullName,
@@ -83,7 +91,8 @@ class StudentServiceImpl(
             address = requestDTO.address,
             status = true,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            role = defaultRole
         )
 
         val savedStudent = studentRepository.save(student)
@@ -102,6 +111,28 @@ class StudentServiceImpl(
         return StudentResponseDTO(student)
     }
 
+    override fun changeRole(email: String, role: String): StudentResponseDTO {
+        val student = studentRepository.findByEmail(email)
+            ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Student not found"
+            )
+
+        val newRole = roleRepository.findByName(role.trim().uppercase())
+            ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Role not found"
+            )
+
+        student.role = newRole
+
+        val savedStudent = studentRepository.save(student)
+
+        return StudentResponseDTO(savedStudent)
+
+
+    }
+
 
 
 
@@ -114,6 +145,7 @@ class StudentServiceImpl(
             gender = student.gender,
             address = student.address,
             status = student.status,
+            role = student.role?.name
         )
     }
 

@@ -20,7 +20,7 @@ class JwtServiceImpl (
     private val expiration: Long
 ): JwtService {
 
-    override fun generateToken(email: String): String {
+    override fun generateToken(email: String, role: String): String {
 
         val now = Date()
         val expiredDate = Date(now.time + expiration)
@@ -29,6 +29,7 @@ class JwtServiceImpl (
 
         return Jwts.builder()
             .subject(email)
+            .claim("role", role)
             .issuedAt(now)
             .expiration(expiredDate)
             .signWith(key)
@@ -46,6 +47,21 @@ class JwtServiceImpl (
                 .payload
                 .subject
 
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override fun extractRole(token: String): String? {
+        return try {
+            val key = Keys.hmacShaKeyFor(secret.toByteArray())
+
+            Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .payload
+                .get("role", String::class.java)
         } catch (e: Exception) {
             null
         }

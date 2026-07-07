@@ -9,5 +9,6 @@ interface StudentService {
     fun login(requestDTO: StudentLoginRequestDTO): AuthResponseDTO
     fun register(requestDTO: StudentRegisterRequestDTO): StudentResponseDTO
     fun getProfile(email: String): StudentResponseDTO
+    fun changeRole(email: String, role: String): StudentResponseDTO
 
 }
