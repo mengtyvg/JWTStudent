@@ -1,9 +1,11 @@
 package com.example.jwt.student.controller
 
 import com.example.jwt.student.dto.AuthResponseDTO
+import com.example.jwt.student.dto.BookResponseDTO
 import com.example.jwt.student.dto.StudentLoginRequestDTO
 import com.example.jwt.student.dto.StudentRegisterRequestDTO
 import com.example.jwt.student.dto.StudentResponseDTO
+import com.example.jwt.student.service.BookService
 import com.example.jwt.student.service.StudentService
 import jakarta.validation.Valid
 import org.springframework.security.core.Authentication
@@ -16,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/student")
 class StudentController(
-    private val studentService: StudentService
+    private val studentService: StudentService,
+    private val bookService: BookService
 ) {
     @PostMapping("/register")
     fun register(
@@ -38,5 +41,10 @@ class StudentController(
         return studentService.getProfile(loggedInEmail)
 
 
+    }
+
+    @GetMapping("/AllBooks")
+    fun getAllBooks(authentication: Authentication): List<BookResponseDTO> {
+        return bookService.getAllBook()
     }
 }

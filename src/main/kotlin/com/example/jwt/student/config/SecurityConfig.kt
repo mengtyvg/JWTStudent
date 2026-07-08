@@ -24,6 +24,15 @@ class SecurityConfig(
             }
             .authorizeHttpRequests {
                 it.requestMatchers(
+                    "/",
+                    "/index.html",
+                    "/styles.css",
+                    "/app.js",
+                    "/favicon.ico",
+                    "/api/anime/image"
+                ).permitAll()
+
+                it.requestMatchers(
                     HttpMethod.POST,
                     "/api/student/register",
                     "/api/student/login"
